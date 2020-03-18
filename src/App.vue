@@ -294,11 +294,17 @@ export default {
      * 取得台灣縣市鎮名稱資料
      */
     getCounty() {
-      const vm = this;
+      /**
+       * * 等之後開 API 再來用
+       */
+      // const vm = this;
 
-      vm.axios.get('http://localhost:8080/taiwanCounty.json').then((res) => {
-        vm.county = res.data;
-      });
+      // vm.axios.get(`${process.env.VUE_APP_APIPATH}`).then((res) => {
+      //   vm.county = res.data;
+      // });
+
+      // * 偷懶先用這招
+      this.county = require('../public/taiwanCounty.json');
     },
 
     // 取得藥局圖標與判斷顏色
