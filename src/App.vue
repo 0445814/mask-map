@@ -136,7 +136,7 @@
                 :src="getAvatar('child', item.properties.mask_child)"
                 width="40"
                 alt="baby-avatar"
-                style="top: 7.6px;"
+                style="top: 6.3px;"
               />
               {{ item.properties.mask_child }}
             </div>
