@@ -118,23 +118,25 @@
               :class="item.properties.mask_adult > 0 ? 'bg-mask-primary' : 'bg-mask-none'"
             >
               <img
-                class="d-inline-block pt-1"
+                class="d-inline-block position-relative"
                 :src="getAvatar('adult', item.properties.mask_adult)"
                 width="40"
                 alt="woman-avatar"
+                style="top: 2px;"
               />
               {{ item.properties.mask_adult }}
             </div>
             <div
-              class="mask-num mask-num__child text-white
+              class="mask-num mask-num__child  text-white
               d-flex justify-content-around align-items-center ml-1"
               :class="item.properties.mask_child > 0 ? 'bg-mask-secondary' : 'bg-mask-none'"
             >
               <img
-                class="d-inline-block pt-2"
+                class="d-inline-block position-relative"
                 :src="getAvatar('child', item.properties.mask_child)"
                 width="40"
                 alt="baby-avatar"
+                style="top: 7.6px;"
               />
               {{ item.properties.mask_child }}
             </div>
@@ -227,11 +229,10 @@ export default {
     },
     filteredPharmacies() {
       const vm = this;
-      const filteredPharmacies = vm.pharmacies.filter(
-        (item) => item.properties.town === vm.selectedDistrict,
+      return vm.pharmacies.filter(
+        (item) => item.properties.county === vm.selectedCity
+        && item.properties.town === vm.selectedDistrict,
       );
-
-      return filteredPharmacies;
     },
     searchPharmacies() {
       const vm = this;
@@ -415,19 +416,17 @@ export default {
       // 如果選擇的行政區沒有藥局，則不移動
       if (vm.filteredPharmacies.length === 0) return;
 
-      window.map.setView([
-        pharmacyPlace.geometry.coordinates[1],
-        pharmacyPlace.geometry.coordinates[0],
-      ], 16);
+      window.map.setView(
+        [pharmacyPlace.geometry.coordinates[1], pharmacyPlace.geometry.coordinates[0]],
+        16,
+      );
     },
 
     /**
      * 如果使用者拒絕提供地理位置，則默認顯示為第一筆藥局位置
      */
     firstLocate() {
-      window.navigator.geolocation.watchPosition(
-        () => this.relocate(),
-      );
+      window.navigator.geolocation.watchPosition(() => this.relocate());
     },
     relocate() {
       window.navigator.geolocation.getCurrentPosition((position) => {
