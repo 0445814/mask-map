@@ -1,5 +1,9 @@
 <template>
   <div id="app" class="w-100 h-100">
+    <Loading v-if="isLoading">
+      <p class="text-white m-0 h3">資料讀取中. . .</p>
+    </Loading>
+
     <div id="mask-map" class="w-100 h-100" :class="{ active: isActive }"></div>
 
     <div class="board position-absolute bg-white" :class="{ active: isActive }">
@@ -162,6 +166,8 @@ import { format, getDay } from 'date-fns';
 export default {
   data() {
     return {
+      // 讀取畫面
+      isLoading: true,
       // 是否啟用左方導覽版
       isActive: true,
       // 搜尋欄位是否 focus
@@ -203,6 +209,9 @@ export default {
       // 搜尋關鍵字
       searchWord: '',
     };
+  },
+  components: {
+    Loading: () => import('@/components/Loading'),
   },
   computed: {
     filteredDistricts() {
@@ -383,6 +392,11 @@ export default {
         [pharmacyPlace] = vm.filteredPharmacies;
       } else {
         pharmacyPlace = selectedPharmacy;
+
+        // iPad 大小以下會收起左方導覽列
+        if (window.document.body.clientWidth <= 768) {
+          vm.isActive = false;
+        }
         const maskSum = pharmacyPlace.properties.mask_adult + pharmacyPlace.properties.mask_child;
         const marker = L.marker(
           [pharmacyPlace.geometry.coordinates[1], pharmacyPlace.geometry.coordinates[0]],
@@ -404,12 +418,20 @@ export default {
       window.map.setView([
         pharmacyPlace.geometry.coordinates[1],
         pharmacyPlace.geometry.coordinates[0],
-      ]);
+      ], 16);
     },
 
+    /**
+     * 如果使用者拒絕提供地理位置，則默認顯示為第一筆藥局位置
+     */
+    firstLocate() {
+      window.navigator.geolocation.watchPosition(
+        () => this.relocate(),
+      );
+    },
     relocate() {
       window.navigator.geolocation.getCurrentPosition((position) => {
-        window.map.setView([position.coords.latitude, position.coords.longitude]);
+        window.map.setView([position.coords.latitude, position.coords.longitude], 16);
       });
     },
     /**
@@ -424,8 +446,17 @@ export default {
     },
   },
   created() {
-    this.getToday();
-    this.getCounty();
+    const vm = this;
+    vm.getToday();
+    vm.getCounty();
+    // vm.relocate();
+    // vm.firstLocate();
+  },
+  updated() {
+    const vm = this;
+    setTimeout(() => {
+      vm.isLoading = false;
+    }, 2000);
   },
   async mounted() {
     const vm = this;
@@ -437,11 +468,19 @@ export default {
         vm.pharmacies = res.data.features;
       });
     // 創建地圖
-    const map = L.map('mask-map').locate({
-      setView: true,
-      maxZoom: 16,
+    // const map = L.map('mask-map').locate({
+    //   setView: true,
+    //   maxZoom: 16,
+    // });[25.029532, 121.518592]
+    const map = L.map('mask-map', {
+      center: [25.058709, 121.558489],
+      zoom: 7,
+      minZoom: 7,
+      maxBounds: L.latLngBounds(L.latLng(28, 115), L.latLng(20, 127)),
+      zoomControl: false,
     });
 
+    vm.relocate();
     // 將 map 設置成全域變數
     window.map = map;
 
@@ -513,7 +552,7 @@ $mask-none: #a5a5a5;
 
 .board {
   width: 300px;
-  height: 100%;
+  height: 100vh;
   box-shadow: 1px 1px 7px 0px rgba(0, 0, 0, 0.5);
   transition: all 1s;
   left: 0;
@@ -577,6 +616,13 @@ $mask-none: #a5a5a5;
     // 這樣才會出現下拉卷軸
     height: 100%;
     overflow: auto;
+
+    &__item {
+      cursor: pointer;
+      &:hover {
+        background: rgba(0, 0, 0, 0.05);
+      }
+    }
   }
 }
 ::-webkit-scrollbar {
