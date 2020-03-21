@@ -1,47 +1,47 @@
 <template>
   <div id="app" class="w-100 h-100">
     <Loading v-if="isLoading">
-      <p class="text-white m-0 h3">資料讀取中. . .</p>
+      <p class="text-white m-0 h3">資料讀取中 ...</p>
     </Loading>
-
-    <div id="mask-map" class="w-100 h-100" :class="{ active: isActive }"></div>
-
-    <div class="board position-absolute bg-white" :class="{ active: isActive }">
+    <!--    導覽列     -->
+    <div class="board position-absolute bg-white" :class="{ active: isActive }" v-else>
       <button
         class="board-btn position-absolute btn text-white d-flex justify-content-center"
         @click="isActive = !isActive"
       >
         <i class="far fa-angle-left"></i>
       </button>
+      <!--    導覽列 header     -->
       <div class="board-header bg-mask-primary">
-        <div class="board-header__info d-flex justify-content-around  align-items-center pt-2 pb-2">
-          <div class="header-header__date">
-            <p class="text-white">{{ today.date }}</p>
-            <p class="text-white h3">{{ today.weekDay }}</p>
+        <div class="board-header__info d-flex justify-content-around align-items-center pt-2 pb-2">
+          <div class="header-header__date text-white">
+            <p>{{ today.date }}</p>
+            <p class="h3">{{ today.weekDay }}</p>
           </div>
 
           <div class="board-header__avatar">
-            <img src="../src/assets/images/medical_mask07_businessman.png" width="70" alt="" />
+            <img
+              src="@/assets/images/medical_mask07_businessman.png"
+              width="70"
+              alt="man with mask"
+            />
             <img
               class="pt-3"
-              src="../src/assets/images/medical_mask02_girl.png"
+              src="@/assets/images/medical_mask02_girl.png"
               width="60"
-              alt=""
+              alt="girl with mask"
             />
           </div>
         </div>
 
-        <div class="board-header__restriction text-center mb-3">
-          <p class="text-white m-0" v-if="today.weekDayNum % 2 === 0">
+        <div class="board-header__restriction text-center text-white mb-3">
+          <p class="m-0" v-if="today.weekDayNum % 2 === 0">
             身分證末碼為 <span class="h3">2,4,6,8,0</span> 可購買
           </p>
-          <p
-            class="text-white m-0"
-            v-else-if="today.weekDayNum % 2 !== 0 && today.weekDayNum !== 7"
-          >
+          <p class="m-0" v-else-if="today.weekDayNum % 2 !== 0 && today.weekDayNum !== 7">
             身分證末碼為 <span class="h3">1,3,5,7,9</span> 可購買
           </p>
-          <p class="text-white m-0" v-else>週日不限定身份證字號，皆可購買</p>
+          <p class="m-0" v-else>週日不限定身份證字號，皆可購買</p>
         </div>
 
         <div class="board-header__search pb-3 px-3">
@@ -154,6 +154,7 @@
         <p class="h5">試試搜尋別的地方吧 :D</p>
       </div>
     </div>
+    <div id="mask-map" class="w-100 h-100" :class="{ active: isActive }"></div>
   </div>
 </template>
 
@@ -230,8 +231,7 @@ export default {
     filteredPharmacies() {
       const vm = this;
       return vm.pharmacies.filter(
-        (item) => item.properties.county === vm.selectedCity
-        && item.properties.town === vm.selectedDistrict,
+        (i) => i.properties.county === vm.selectedCity && i.properties.town === vm.selectedDistrict,
       );
     },
     searchPharmacies() {
@@ -584,12 +584,21 @@ $mask-none: #a5a5a5;
       }
 
       .list-group {
-        border-radius: 0 0 20px 20px;
+        // border-radius: 0 0 20px 20px;
+        z-index: 10;
         .list-group-item {
           top: -5px;
-          border-top: 0;
-          border-color: 1px solid #ced4da;
-          border-bottom: 0;
+          // border-top: 0;
+          // border-color: 1px solid #ced4da;
+          // border: 0px 1px 1px 1px solid #ced4da !important;
+          border-width: 0px 1px 1px 1px;
+          border-style: solid;
+          border-color: #ced4da;
+          // border-bottom: 0;
+          &:first-child {
+            border-top-left-radius: 0;
+            border-top-right-radius: 0;
+          }
           .search-list {
             cursor: pointer;
 
@@ -647,5 +656,10 @@ $mask-none: #a5a5a5;
   box-shadow: 2px 3px 6px #00000029;
   right: -26px;
   top: 249px;
+}
+
+input[type="text"]:focus{
+  box-shadow: none;
+  border:1px solid #ced4da;
 }
 </style>
