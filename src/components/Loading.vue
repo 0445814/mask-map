@@ -1,14 +1,16 @@
 <template>
-  <div class="loading">
-    <div class="pacman" style="width: 100px">
-      <div></div>
-      <div></div>
-      <div></div>
-      <div></div>
-      <div></div>
+  <transition>
+    <div class="loading">
+      <div class="pacman" style="width: 100px">
+        <div></div>
+        <div></div>
+        <div></div>
+        <div></div>
+        <div></div>
+      </div>
+      <slot></slot>
     </div>
-    <slot></slot>
-  </div>
+  </transition>
 </template>
 <script>
 import 'loaders.css';
@@ -28,5 +30,23 @@ export default {};
   left: 0;
   background: #73c0d8;
   z-index: 99999;
+}
+.v-leave {
+  opacity: 1;
+}
+.v-leave-active {
+  transition: opacity 1s;
+}
+.v-leave-to {
+  opacity: 0;
+}
+.v-enter {
+  opacity: 0;
+}
+.v-enter-active {
+  transition: opacity 1s;
+}
+.v-enter-to {
+  opacity: 1;
 }
 </style>
