@@ -136,7 +136,7 @@
                 :src="getAvatar('child', item.properties.mask_child)"
                 width="40"
                 alt="baby-avatar"
-                style="top: 6.3px;"
+                style="top: 6px;"
               />
               {{ item.properties.mask_child }}
             </div>
@@ -146,7 +146,7 @@
       <div class="d-flex flex-column align-items-center" v-else>
         <img
           class="d-inline-block pt-2 mt-5 mb-3"
-          src="../src/assets/images/no_masks.png"
+          src="@/assets/images/no_masks.png"
           width="120"
           alt="dog-avatar"
         />
