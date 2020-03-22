@@ -17,8 +17,7 @@ import 'loaders.css';
 
 export default {};
 </script>
-<style lang="scss">
-// @import url('loader.css');
+<style lang="scss" scoped>
 .loading {
   display: flex;
   justify-content: center;

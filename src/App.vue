@@ -1,5 +1,33 @@
 <template>
   <div id="app" class="w-100 h-100">
+    <!-- Modal -->
+    <Modal>
+      <h5 slot="modal-title">注意事項</h5>
+      <div slot="modal-content">
+        <p><i class="fal fa-stars mr-1"></i>目前地圖僅提供簡單查詢功能</p>
+        <p>
+          <i class="fal fa-stars mr-1"></i>口罩數量請以
+          <span class="font-weight-bold">實際藥局存量為主</span>
+        </p>
+        <p><i class="fal fa-stars mr-1"></i>為了方便查詢，請開啟存取位置權限</p>
+        <p>
+          <i class="fal fa-stars mr-1"></i>若需要更多資訊請參考
+          <a href="https://g0v.hackmd.io/gGrOI4_aTsmpoMfLP1OU4A" target="_blank"
+            >口罩供需資訊平台
+          </a>
+        </p>
+      </div>
+      <div slot="modal-content-img">
+        <img
+          class="d-block"
+          src="@/assets/images/smartphone_map_app_woman.png"
+          width="150"
+          alt=""
+        />
+      </div>
+    </Modal>
+
+    <!-- Loading -->
     <Loading v-if="isLoading">
       <p class="text-white m-0 h3">資料讀取中 ...</p>
     </Loading>
@@ -35,13 +63,13 @@
         </div>
 
         <div class="board-header__restriction text-center text-white mb-3">
-          <p class="m-0" v-if="today.weekDayNum % 2 === 0">
+          <p class="m-0" v-if="today.weekDayNum % 2 === 0 && today.weekDayNum !== 0">
             身分證末碼為 <span class="h3">2,4,6,8,0</span> 可購買
           </p>
-          <p class="m-0" v-else-if="today.weekDayNum % 2 !== 0 && today.weekDayNum !== 7">
+          <p class="m-0" v-else-if="today.weekDayNum % 2 !== 0">
             身分證末碼為 <span class="h3">1,3,5,7,9</span> 可購買
           </p>
-          <p class="m-0" v-else>週日不限定身份證字號，皆可購買</p>
+          <p class="m-0" v-else>週日不限定身份證字號，<span class="h3">皆可購買</span></p>
         </div>
 
         <div class="board-header__search pb-3 px-3">
@@ -215,6 +243,7 @@ export default {
   },
   components: {
     Loading: () => import('@/components/Loading'),
+    Modal: () => import('@/components/Modal.vue'),
   },
   computed: {
     filteredDistricts() {
@@ -556,7 +585,7 @@ $mask-none: #a5a5a5;
   transition: all 1s;
   left: 0;
   top: 0;
-  z-index: 9999;
+  z-index: 999;
   transform: translateX(-300px);
   &.active {
     transform: translateX(-0%);
@@ -658,8 +687,8 @@ $mask-none: #a5a5a5;
   top: 249px;
 }
 
-input[type="text"]:focus{
+input[type="text"]:focus {
   box-shadow: none;
-  border:1px solid #ced4da;
+  border: 1px solid #ced4da;
 }
 </style>
