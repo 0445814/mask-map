@@ -97,7 +97,7 @@
             </select>
           </div>
 
-          <div class="position-relative">
+          <div class="position-relative mb-2">
             <input
               type="text"
               class="form-control mx-auto"
@@ -125,6 +125,31 @@
                 </div>
               </li>
             </ul>
+          </div>
+
+          <div class="d-flex justify-content-between text-white">
+            <span class="mr-2">僅顯示仍有存量</span>
+            <div class="custom-control custom-checkbox custom-control-inline mr-0">
+              <input
+                type="checkbox"
+                class="custom-control-input"
+                id="adult-stock"
+                value="mask_adult"
+                v-model="stock"
+              />
+              <label class="custom-control-label" for="adult-stock">成人</label>
+            </div>
+
+            <div class="custom-control custom-checkbox custom-control-inline mr-0">
+              <input
+                type="checkbox"
+                class="custom-control-input"
+                id="child-stock"
+                value="mask_child"
+                v-model="stock"
+              />
+              <label class="custom-control-label" for="child-stock">兒童</label>
+            </div>
           </div>
         </div>
       </div>
@@ -239,6 +264,8 @@ export default {
       },
       // 搜尋關鍵字
       searchWord: '',
+      // 口罩存量選擇
+      stock: [],
     };
   },
   components: {
@@ -259,9 +286,28 @@ export default {
     },
     filteredPharmacies() {
       const vm = this;
-      return vm.pharmacies.filter(
-        (i) => i.properties.county === vm.selectedCity && i.properties.town === vm.selectedDistrict,
-      );
+      let pharmacies = [];
+      if (vm.stock.length === 0) {
+        pharmacies = vm.pharmacies.filter(
+          (i) => i.properties.county === vm.selectedCity
+          && i.properties.town === vm.selectedDistrict,
+        );
+      } else if (vm.stock.length === 1) {
+        pharmacies = vm.pharmacies.filter(
+          (i) => i.properties.county === vm.selectedCity
+          && i.properties.town === vm.selectedDistrict
+          && i.properties[vm.stock[0]] > 0,
+        );
+      } else {
+        pharmacies = vm.pharmacies.filter(
+          (i) => i.properties.county === vm.selectedCity
+          && i.properties.town === vm.selectedDistrict
+          && i.properties[vm.stock[0]] > 0
+          && i.properties[vm.stock[1]] > 0,
+        );
+      }
+
+      return pharmacies;
     },
     searchPharmacies() {
       const vm = this;
@@ -277,7 +323,6 @@ export default {
     },
   },
   methods: {
-    // getAdultAvatar(maskNum) {},
     getAvatar(type, maskNum) {
       const vm = this;
       let avatar;
@@ -477,15 +522,13 @@ export default {
     const vm = this;
     vm.getToday();
     vm.getCounty();
-    // vm.relocate();
-    // vm.firstLocate();
   },
-  updated() {
-    const vm = this;
-    setTimeout(() => {
-      vm.isLoading = false;
-    }, 2000);
-  },
+  // updated() {
+  //   const vm = this;
+  //   setTimeout(() => {
+  //     vm.isLoading = false;
+  //   }, 2000);
+  // },
   async mounted() {
     const vm = this;
 
@@ -495,11 +538,7 @@ export default {
       .then((res) => {
         vm.pharmacies = res.data.features;
       });
-    // 創建地圖
-    // const map = L.map('mask-map').locate({
-    //   setView: true,
-    //   maxZoom: 16,
-    // });[25.029532, 121.518592]
+
     const map = L.map('mask-map', {
       center: [25.058709, 121.558489],
       zoom: 7,
@@ -540,6 +579,8 @@ export default {
           .openPopup(),
       );
     }
+
+    vm.isLoading = false;
   },
 };
 </script>
@@ -684,7 +725,7 @@ $mask-none: #a5a5a5;
   border-radius: 0px 5px 5px 0px;
   box-shadow: 2px 3px 6px #00000029;
   right: -26px;
-  top: 249px;
+  top: 281px;
 }
 
 input[type="text"]:focus {
